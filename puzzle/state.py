@@ -26,8 +26,45 @@ class State:
 
     def neighbors(self) -> List["State"]:
         """Retorna os estados filhos válidos a partir deste estado."""
-        # TODO: implemente a geração de estados filhos
-        raise NotImplementedError
+        filhos = []
+        n = int(len(self.tiles) ** 0.5) 
+        i = self.blank_index
+        linha, coluna = i // n, i % n
+
+        if linha != 0:
+            nova = list(self.tiles)
+            j = i - n
+            nova[i], nova[j] = nova[j], nova[i]
+            nova = tuple(nova)
+            filho = State(nova, parent=self, action="UP", cost=self.cost + 1)
+            filhos.append(filho)
+            #print("pode ir para cima, troca com", i - n)
+        if linha != n - 1:
+            nova = list(self.tiles)
+            j = i + n
+            nova[i], nova[j] = nova[j], nova[i]
+            nova = tuple(nova)
+            filho = State(nova, parent=self, action="DOWN", cost=self.cost + 1)
+            filhos.append(filho)
+            #print("pode ir para baixo, troca com", i + n)
+        if coluna != 0:
+            nova = list(self.tiles)
+            j = i - 1
+            nova[i], nova[j] = nova[j], nova[i]
+            nova = tuple(nova)
+            filho = State(nova, parent=self, action="LEFT", cost=self.cost + 1)
+            filhos.append(filho)
+            #print("pode ir para a esquerda, troca com", i - 1)
+        if coluna != n - 1:
+            nova = list(self.tiles)
+            j = i + 1
+            nova[i], nova[j] = nova[j], nova[i]
+            nova = tuple(nova)
+            filho = State(nova, parent=self, action="RIGHT", cost=self.cost + 1)
+            filhos.append(filho)
+            #print("pode ir para a direita, troca com", i + 1)
+
+        return filhos
 
     def path(self) -> List["State"]:
         """Retorna a sequência de estados do estado inicial até este."""
