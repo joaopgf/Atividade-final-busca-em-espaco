@@ -28,4 +28,4 @@ if __name__ == "__main__":
 
     print_result("BFS",  BFS().search(initial))
     print_result("DFS",  DFS().search(initial))
-    print_result("A*",   AStar().search(initial))
+    #print_result("A*",   AStar().search(initial))
