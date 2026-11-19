@@ -68,13 +68,20 @@ class State:
 
     def path(self) -> List["State"]:
         """Retorna a sequência de estados do estado inicial até este."""
-        # TODO: implemente a reconstrução do caminho usando self.parent
-        raise NotImplementedError
+        caminho = []
+        atual = self
+        while atual is not None:
+            caminho.append(atual)
+            atual = atual.parent 
+        caminho.reverse()                     
+        return caminho
 
     def actions(self) -> List[str]:
         """Retorna a sequência de ações do estado inicial até este."""
-        # TODO: implemente usando path()
-        raise NotImplementedError
+        acoes = []
+        for estado in self.path():
+            acoes.append(estado.action)
+        return acoes[1:]
 
     def __eq__(self, other: object) -> bool:
         return isinstance(other, State) and self.tiles == other.tiles
