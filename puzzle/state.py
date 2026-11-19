@@ -26,19 +26,34 @@ class State:
 
     def neighbors(self) -> List["State"]:
         """Retorna os estados filhos válidos a partir deste estado."""
+        #variável para guardar os filhos
         filhos = []
-        n = int(len(self.tiles) ** 0.5) 
+
+        #define n a partir da raiz quadrada do tamanho de tiles
+        n = int(len(self.tiles) ** 0.5)
+
+        #define i como índice do valor nulo(espaço vazio)
         i = self.blank_index
+
+        #divisão inteira de n gera a linha do i, resto da divisão gera a coluna do i
         linha, coluna = i // n, i % n
 
+        #verifica se o vazio(i) não está na primeira linha
         if linha != 0:
+            #copia o tabuleiro para uma lista (tupla não pode ser alterada)
             nova = list(self.tiles)
+
+            #posição da peça que vai trocar com o vazio
             j = i - n
+
+            #troca o vazio com essa peça
             nova[i], nova[j] = nova[j], nova[i]
             nova = tuple(nova)
             filho = State(nova, parent=self, action="UP", cost=self.cost + 1)
             filhos.append(filho)
             #print("pode ir para cima, troca com", i - n)
+
+        #verifica se o vazio(i) não está na última linha
         if linha != n - 1:
             nova = list(self.tiles)
             j = i + n
@@ -47,6 +62,8 @@ class State:
             filho = State(nova, parent=self, action="DOWN", cost=self.cost + 1)
             filhos.append(filho)
             #print("pode ir para baixo, troca com", i + n)
+
+        #verifica se o vazio(i) não está na primeira coluna
         if coluna != 0:
             nova = list(self.tiles)
             j = i - 1
@@ -55,6 +72,8 @@ class State:
             filho = State(nova, parent=self, action="LEFT", cost=self.cost + 1)
             filhos.append(filho)
             #print("pode ir para a esquerda, troca com", i - 1)
+
+        #verifica se o vazio(i) não está na última coluna
         if coluna != n - 1:
             nova = list(self.tiles)
             j = i + 1
@@ -68,19 +87,32 @@ class State:
 
     def path(self) -> List["State"]:
         """Retorna a sequência de estados do estado inicial até este."""
+
+        #variável que guarda os passos
         caminho = []
+
+        #define variável auxiliar que começa no estado final
         atual = self
+
+        #loop que caminha até atual ser None
         while atual is not None:
+            #adiciona atual no caminho
             caminho.append(atual)
             atual = atual.parent 
+        #inverte o vetor, pois se não ele fica do estado final até o inicial
         caminho.reverse()                     
         return caminho
 
     def actions(self) -> List[str]:
         """Retorna a sequência de ações do estado inicial até este."""
+        #variável que guarda as ações
         acoes = []
+
+        #loop que percorre o path
         for estado in self.path():
+            #adiciona a ação no vetor
             acoes.append(estado.action)
+        #retorna o vetor a partir do índice 1 pois o 0 (None) é o estado inicial que não tem ação para chegar nele
         return acoes[1:]
 
     def __eq__(self, other: object) -> bool:
