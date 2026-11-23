@@ -13,14 +13,21 @@ class DFS(BaseSearch):
     def search(self, initial: State) -> SearchResult:
         #por ser lista um vetor comum ao invés de deque basta
         fronteira = [initial]
-        visitados = {initial}
+
+        #dicionário: tabuleiro -> menor profundidade em que ele já apareceu
+        #(um set só diria "já vi"; aqui também sabemos "a que profundidade")
+        visitados = {initial: 0}
         expandidos = 0
         gerados = 0
         max_fronteira = 1
 
         while fronteira:
-            #por ser uma fila o pop já basta ao invés do popleft
+            #por ser uma pilha o pop já basta ao invés do popleft
             no = fronteira.pop()
+
+            #se esse tabuleiro já foi alcançado por um caminho mais raso, esta entrada é velha: ignora
+            if no.cost > visitados[no]:
+                continue
 
             if no.is_goal:
                 return SearchResult(
@@ -40,8 +47,10 @@ class DFS(BaseSearch):
             gerados += len(filhos)
 
             for filho in filhos:
-                if filho not in visitados:
-                    visitados.add(filho)
+                #aceita se o tabuleiro é novo ou se agora chegamos nele por um caminho mais raso
+                #(com um set global, um tabuleiro visto primeiro perto do limite bloqueava o caminho curto)
+                if filho not in visitados or filho.cost < visitados[filho]:
+                    visitados[filho] = filho.cost
                     fronteira.append(filho)
 
             max_fronteira = max(max_fronteira, len(fronteira))
